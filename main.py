@@ -16,7 +16,7 @@ SAVE = parser.add_argument('--save', action='store_true', help='Salvar a imagem 
 TIME = parser.add_argument('--time', action='store_true', help='Exibir o tempo de execução')
 URL_IMAGE = parser.add_argument('--url', type=str, help='URL da imagem para usar no algoritmo')
 
-def freeman(imagem_escolhida, tipo):
+def freeman(imagem_escolhida, tipo, threshold):
     
     # Inicializa o tempo de execução
     start_time = time.time()
@@ -50,6 +50,7 @@ if __name__ == '__main__':
     # Verifica se o usuário passou uma URL de imagem
     args = parser.parse_args()
     
+    # Baixa a imagem da URL
     if args.url:
         ut_img.download_imagem(args)
     
@@ -63,7 +64,6 @@ if __name__ == '__main__':
     imagem_escolhida = ut_img.escolher_imagens(imagens_disponiveis, console)
     
     # Define os valores de sigma e threshold
-    #sigma = float(Prompt.ask('\nDigite o [bold purple]valor[/bold purple] do [bold purple]sigma[/bold purple] [cyan](sigma)[/cyan] [green](default 1)[/green]', default=1))
-    #levels = int(Prompt.ask('Digite o [bold purple]número[/bold purple] de [bold purple]níveis[/bold purple] [cyan](levels)[/cyan] [green](default 64)[/green]', default=64))
-
-    freeman(imagem_escolhida, 'watershed')
+    threshold = float(Prompt.ask('\nDigite o [bold purple]valor[/bold purple] do [bold purple]threshold[/bold purple] [cyan](sigma)[/cyan] [green](default 128)[/green]', default=128))
+    
+    freeman(imagem_escolhida, 'watershed', threshold)
