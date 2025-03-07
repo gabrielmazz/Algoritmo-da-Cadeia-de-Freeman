@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 # Argumento para salvar a imagem na pasta de resultados
 SAVE = parser.add_argument('--save', action='store_true', help='Salvar a imagem na pasta de resultados')
 TIME = parser.add_argument('--time', action='store_true', help='Exibir o tempo de execução')
+URL_IMAGE = parser.add_argument('--url', type=str, help='URL da imagem para usar no algoritmo')
 
 def freeman(imagem_escolhida, tipo):
     
@@ -32,14 +33,25 @@ def freeman(imagem_escolhida, tipo):
     # Realiza a plotagem das imagens
     ut_img.plotagem_imagem(Imagem_Original, Imagem_Binaria, Pixels_limite)
     
+    # Deleta a imagem baixada da URL (se existir)
+    if URL_IMAGE:
+        ut_img.deletar_imagem(imagem_escolhida)
+    
     # Salva a imagem na pasta de resultados
     # if SAVE:
     #     ut_img.salvar_imagem(Imagem_Filtrada, './resultados/{}_{}_sigma_{}_levels_{}.png'.format(imagem_escolhida.split('.')[0], tipo, sigma, levels))
 
 if __name__ == '__main__':
     
+    # Funções triviais
     ut_code.clear_terminal()
     ut_code.print_title()
+    
+    # Verifica se o usuário passou uma URL de imagem
+    args = parser.parse_args()
+    
+    if args.url:
+        ut_img.download_imagem(args)
     
     # Inicializa a console
     console = Console()

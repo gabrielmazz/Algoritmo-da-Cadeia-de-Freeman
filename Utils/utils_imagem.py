@@ -6,9 +6,8 @@ from rich.prompt import Prompt
 import os
 import cv2
 from PIL import Image
-
-#original_image = Image.open(image_path).convert('RGB')
-#binary_image = binarize_image(image_path)
+from io import BytesIO
+import requests
 
 def leitura_Imagem(nome):
     
@@ -17,6 +16,29 @@ def leitura_Imagem(nome):
     
     # Retorna a imagem
     return Imagem
+
+def download_imagem(args):
+    
+    # Baixa a imagem da URL
+    response = requests.get(args.url)
+    
+    # Verifica se a requisição foi bem sucedida
+    if response.status_code == 200:
+        
+        # Lê a imagem
+        Imagem = Image.open(BytesIO(response.content))
+        
+        # Salva a imagem
+        Imagem.save('./imagens/{}'.format(args.url.split('/')[-1]))
+        
+    else:
+        console.print('Erro ao baixar a imagem. Tente novamente.')
+
+
+def deletar_imagem(nome):
+    
+    # Deleta a imagem
+    os.remove('./imagens/{}'.format(nome))
 
 def binarizacao_imagem(nome, threshold):
     
