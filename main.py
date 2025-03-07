@@ -25,8 +25,8 @@ def freeman(imagem_escolhida, tipo):
     ut_img.plotagem_imagem(Imagem_Original, Imagem_Binaria, Pixels_limite)
     
     # Salva a imagem na pasta de resultados
-    #if SAVE:
-    #    ut_img.salvar_imagem(Imagem_Filtrada, './resultados/{}_{}_sigma_{}_levels_{}.png'.format(imagem_escolhida.split('.')[0], tipo, sigma, levels))
+    # if SAVE:
+    #     ut_img.salvar_imagem(Imagem_Filtrada, './resultados/{}_{}_sigma_{}_levels_{}.png'.format(imagem_escolhida.split('.')[0], tipo, sigma, levels))
 
 if __name__ == '__main__':
     

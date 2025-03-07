@@ -9,9 +9,9 @@ def find_ponto_de_início(image):
                 return row, col
     return None
 
-def get_neighbor(row, col, direction):
-    """Retorna as coordenadas do vizinho na direção especificada."""
-    directions = [
+def obtem_vizinhos(row, col, direcao):
+    
+    direcoes = [
         (0, 1),   # Direita
         (1, 1),   # Diagonal direita-baixo
         (1, 0),   # Baixo
@@ -21,28 +21,34 @@ def get_neighbor(row, col, direction):
         (-1, 0),  # Cima
         (-1, 1)   # Diagonal direita-cima
     ]
-    delta_row, delta_col = directions[direction]
+    
+    # Obtém as coordenadas do vizinho
+    delta_row, delta_col = direcoes[direcao]
+    
+    # Retorna as coordenadas do vizinho
     return row + delta_row, col + delta_col
 
-def find_next_boundary_pixel(image, linha_atual, coluna_atual, previous_direction):
-    """Encontra o próximo pixel de fronteira na ordem de busca."""
-    search_order = [(previous_direction + i) % 8 for i in range(1, 9)]
-    for direction in search_order:
-        new_row, new_col = get_neighbor(linha_atual, coluna_atual, direction)
-        if 0 <= new_row < image.shape[0] and 0 <= new_col < image.shape[1]:
-            if image[new_row, new_col] == 255:
-                return new_row, new_col, direction
+def find_proximo_pixel_de_limite(image, linha_atual, coluna_atual, direcao_anterior):
+    
+    # Ordem de busca para os vizinhos
+    ordem_busca = [(direcao_anterior + i) % 8 for i in range(1, 9)]
+    
+    # Verifica se os vizinhos estão dentro dos limites da imagem
+    # e se o pixel é um pixel de fronteira, retornando o primeiro encontrado
+    for direcao in ordem_busca:
+        
+        # Obtém as coordenadas do vizinho
+        nova_linha, nova_coluna = obtem_vizinhos(linha_atual, coluna_atual, direcao)
+        
+        # Verifica se o vizinho está dentro dos limites da imagem
+        if 0 <= nova_linha < image.shape[0] and 0 <= nova_coluna < image.shape[1]:
+            if image[nova_linha, nova_coluna] == 255:
+                return nova_linha, nova_coluna, direcao
+    
+    # Se nenhum vizinho for encontrado, retorna None
     return None
 
 def codigo_freeman(Imagem_Binaria):
-    
-    """Gera o código de Freeman para a fronteira do objeto na imagem binária.
-    Args:
-        Imagem_Binaria (np.ndarray): Imagem binária com objetos em branco e fundo em preto.
-    Returns:
-        str: Código de Freeman para a fronteira do objeto.
-        list: Lista de pixels de fronteira.
-    """
     
     # Encontra o primeiro pixel de fronteira
     ponto_de_início = find_ponto_de_início(Imagem_Binaria)
@@ -55,13 +61,15 @@ def codigo_freeman(Imagem_Binaria):
     # Inicializa as variáveis
     Codigo_freeman = ""
     linha_atual, coluna_atual = ponto_de_início
-    previous_direction = 7  # Começa na direção 7 (direita-cima)
-    visited_pixels = set()
+    direcao_anterior = 7  # Começa na direção 7 (direita-cima)
+    vizinhos_visitados = set()
     Pixels_limite = [(linha_atual, coluna_atual)]
     max_iterations = 10000  # Limite máximo de iterações para evitar loops infinitos
     iteration_count = 0     # Contador de iterações
 
     while True:
+        
+        # Incrementa o contador de iterações
         iteration_count += 1
         
         # Verifica se o número máximo de iterações foi atingido
@@ -69,27 +77,42 @@ def codigo_freeman(Imagem_Binaria):
             print("Número máximo de iterações atingido. Verifique a imagem.")
             break
 
-
-        próxomo_pixel_info = find_next_boundary_pixel(Imagem_Binaria, linha_atual, coluna_atual, (previous_direction + 4) % 8)
+        # Encontra o próximo pixel de fronteira na ordem de busca
+        proximo_pixel_info = find_proximo_pixel_de_limite(Imagem_Binaria, linha_atual, coluna_atual, (direcao_anterior + 4) % 8)
+        
+        # Verifica se o próximo pixel é válido
         if proximo_pixel_info is None:
             break
 
-        next_row, next_col, direction = proximo_pixel_info
+        # Atualiza as variáveis para o próximo pixel
+        proxima_linha, proxima_coluna, direcao = proximo_pixel_info
+        
         # Verifica se o próximo pixel é o ponto inicial e se a fronteira está completa
-        if (next_row, next_col) == ponto_de_início and len(Pixels_limite) > 1:
-            Codigo_freeman += str(direction)
+        if (proxima_linha, proxima_coluna) == ponto_de_início and len(Pixels_limite) > 1:
+            
+            # Adiciona o último pixel de fronteira
+            Codigo_freeman += str(direcao)
             break
 
-        if (next_row, next_col) in visited_pixels:
+        # Verifica se o próximo pixel já foi visitado
+        if (proxima_linha, proxima_coluna) in vizinhos_visitados:
             print("Loop detectado. Encerrando a iteração.")
             break
 
-        visited_pixels.add((next_row, next_col))
-        Pixels_limite.append((next_row, next_col))
+        # Adiciona o próximo pixel de fronteira aos vizinhos visitados
+        vizinhos_visitados.add((proxima_linha, proxima_coluna))
+        
+        # Adiciona o próximo pixel de fronteira à lista de pixels de fronteira
+        Pixels_limite.append((proxima_linha, proxima_coluna))
 
-        Codigo_freeman += str(direction)
-        linha_atual, coluna_atual = next_row, next_col
-        previous_direction = direction
+        # Adiciona a direção ao código de Freeman
+        Codigo_freeman += str(direcao)
+        
+        # Atualiza as variáveis para a próxima iteração
+        linha_atual, coluna_atual = proxima_linha, proxima_coluna
+        
+        # Atualiza a direção anterior
+        direcao_anterior = direcao
 
     return Codigo_freeman, Pixels_limite
 
