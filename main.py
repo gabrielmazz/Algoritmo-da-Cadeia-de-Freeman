@@ -6,20 +6,28 @@ import Bordas.borda as borda
 import Utils.utils_imagem as ut_img
 import Utils.utils_code as ut_code
 import numpy as np
+import time
 
 # Variáveis para passagem de argumentos via terminal
 parser = argparse.ArgumentParser()
 
 # Argumento para salvar a imagem na pasta de resultados
 SAVE = parser.add_argument('--save', action='store_true', help='Salvar a imagem na pasta de resultados')
+TIME = parser.add_argument('--time', action='store_true', help='Exibir o tempo de execução')
 
 def freeman(imagem_escolhida, tipo):
+    
+    # Inicializa o tempo de execução
+    start_time = time.time()
     
     # Leitura da imagem
     Imagem_Original, Imagem_Binaria = ut_img.binarizacao_imagem('./imagens/{}'.format(imagem_escolhida), 128)
     
     # Aplica a cadeia de Freeman
     Codigo_freeman, Pixels_limite = borda.cadeia_freeman(Imagem_Binaria)
+    
+    # Finaliza o tempo de execução
+    end_time = time.time()
     
     # Realiza a plotagem das imagens
     ut_img.plotagem_imagem(Imagem_Original, Imagem_Binaria, Pixels_limite)
