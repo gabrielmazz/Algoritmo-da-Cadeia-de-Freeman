@@ -55,7 +55,7 @@ def binarizacao_imagem(nome, threshold):
     _, Imagem_Binaria = cv2.threshold(Imagem_Cinza, threshold, 255, cv2.THRESH_BINARY)
     
     # Inverte a imagem binária (objetos em branco e fundo em preto)
-    Imagem_Binaria = cv2.bitwise_not(Imagem_Binaria)
+    #Imagem_Binaria = cv2.bitwise_not(Imagem_Binaria)
     
     # Retorna a imagem original (Pillow) e a imagem binarizada (NumPy)
     return Imagem_Original, Imagem_Binaria
@@ -63,18 +63,19 @@ def binarizacao_imagem(nome, threshold):
 # Realiza a plotagem das imagens com o matplotlib
 def plotagem_imagem(Imagem_Original, Imagem_Binaria, Pixels_limite):
     
-    fig, axs = plt.subplots(1, 2, figsize=(10, 5))
+    fig, axs = plt.subplots(1, 3, figsize=(10, 5))
     
     # Adiciona as imagens nos subplots
     axs[0].imshow(Imagem_Original)
     axs[0].set_title('Imagem Original')
     
-    # Adiciona os pixels de fronteira na imagem binária
-    for row, col in Pixels_limite:
-        Imagem_Binaria[row, col] = 128
-        
     axs[1].imshow(Imagem_Binaria, cmap='Greys')
-    axs[1].set_title('Imagem Binária com Pixels de Fronteira')
+    axs[1].set_title('Imagem Binária')
+
+    linhas, colunas = zip(*Pixels_limite)
+    axs[2].imshow(Imagem_Binaria, cmap='Greys')
+    axs[2].set_title('Pontos de Fronteira')
+    axs[2].plot(colunas, linhas, 'r-', linewidth=2)
     
     # Remove os eixos dos subplots
     for ax in axs.flat:
@@ -100,12 +101,11 @@ def lista_imagens_pasta(pasta, console):
 
 def escolher_imagens(imagens, console):
     
-    # Escolhe uma imagem para aplicar o Watershed
+    # Escolhe uma imagem para aplicar o método de Freeman
     while True:
-        escolha = int(Prompt.ask('Escolha uma imagem para aplicar o [bold purple]Watershed[/bold purple]:', console=console))
+        escolha = int(Prompt.ask('Escolha uma imagem para aplicar o [bold purple]Freeman[/bold purple]', console=console))
         
         if escolha > 0 and escolha <= len(imagens):
             return imagens[escolha-1]
         else:
             console.print('Escolha inválida. Tente novamente.')
-    
