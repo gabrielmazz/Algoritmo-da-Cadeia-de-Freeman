@@ -28,13 +28,13 @@ def freeman(imagem_escolhida, tipo, threshold, args):
         task = progress.add_task("[cyan]Processando...", total=3)
         
         # Leitura da imagem
-        progress.update(task, advance=1, description='[green]Lendo e binarizando a imagem...')
+        progress.update(task, advance=1, description='[cyan]Lendo e binarizando a imagem...')
         Imagem_Original, Imagem_Binaria = ut_img.binarizacao_imagem('./imagens/{}'.format(imagem_escolhida), threshold)
         
         time.sleep(1)
         
         # Aplica a cadeia de Freeman
-        progress.update(task, advance=1, description='[green]Aplicando a cadeia de Freeman...')
+        progress.update(task, advance=1, description='[cyan]Aplicando a cadeia de Freeman...')
         Codigo_freeman, Pixels_limite = borda.cadeia_freeman(Imagem_Binaria)
     
         time.sleep(1)
@@ -43,7 +43,7 @@ def freeman(imagem_escolhida, tipo, threshold, args):
         end_time = time.time() - start_time - 2
         
         # Realiza a plotagem das imagens
-        progress.update(task, advance=1, description='[green]Plotando as imagens...')
+        progress.update(task, advance=1, description='[cyan]Plotando as imagens...')
         ut_img.plotagem_imagem(Imagem_Original, Imagem_Binaria, Pixels_limite)
         
     time.sleep(1)

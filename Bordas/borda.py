@@ -2,7 +2,6 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 def find_ponto_de_início(image):
-    """Encontra o primeiro pixel de fronteira (mais à esquerda e no topo)."""
     for row in range(image.shape[0]):
         for col in range(image.shape[1]):
             if image[row, col] == 255:
